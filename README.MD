@@ -412,7 +412,8 @@ hello: Hello Giulio how are you?
 
 
 # REFERENCES
-[k3d](https://github.com/rancher/k3d)
-[k3sup](https://github.com/alexellis/k3sup)
-[k3s](https://k3s.io/)
-
+- [Getting Started with k3s](https://freshbrewed.science/getting-started-with-k3s/index.html)
+- [Manage k3s clusters with k3d](https://felixwiedmann.de/k3d-manage-k3s-clusters)
+- [k3d](https://github.com/rancher/k3d)
+- [k3sup](https://github.com/alexellis/k3sup)
+- [k3s](https://k3s.io/)
