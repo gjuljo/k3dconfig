@@ -1,0 +1,86 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: test3-config-vol
+data:
+  hello.html: |
+     hello --> {{.Start}} {{.Username}} {{.End}}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: test3-config-env
+data:
+  MYAPP_START: "Hello"
+  MYAPP_END: "how are you?"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test3-deployment
+  labels:
+    app: test3-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test3-app
+  template:
+    metadata:
+      labels:
+        app: test3-app
+    spec:
+      containers:
+      - name: test3-app
+        image: registry.lvh.me:5000/gjuljo/myapp:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: MYAPP_USERNAME
+          value: Giulio
+        - name: MYAPP_START
+          valueFrom:
+            configMapKeyRef:
+              name: test3-config-env
+              key: MYAPP_START
+        - name: MYAPP_END
+          valueFrom:
+            configMapKeyRef:
+              name: test3-config-env
+              key: MYAPP_END
+        volumeMounts:
+        - name: test3-vol
+          mountPath: /app/static                  
+      volumes:
+      - name: test3-vol
+        configMap:
+          name: test3-config-vol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test3-service
+  labels:
+    app: test3-service
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+    name: http
+  selector:
+    app: test3-app
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test3-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: test3.lvh.me
+    http:
+      paths:
+      - backend:
+          serviceName: test3-service
+          servicePort: 8001

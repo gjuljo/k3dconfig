@@ -1,0 +1,71 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: test2-config
+data:
+  MYAPP_START_CONFIG: "Hello"
+  MYAPP_END_CONFIG: "how are you?"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test2-deployment
+  labels:
+    app: test2-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test2-app
+  template:
+    metadata:
+      labels:
+        app: test2-app
+    spec:
+      containers:
+      - name: test2-app
+        image: registry.lvh.me:5000/gjuljo/myapp:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: MYAPP_USERNAME
+          value: Giulio
+        - name: MYAPP_START
+          valueFrom:
+            configMapKeyRef:
+              name: test2-config
+              key: MYAPP_START_CONFIG
+        - name: MYAPP_END
+          valueFrom:
+            configMapKeyRef:
+              name: test2-config
+              key: MYAPP_END_CONFIG     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test2-service
+  labels:
+    app: test2-service
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+    name: http
+  selector:
+    app: test2-app
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test2-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: test2.lvh.me
+    http:
+      paths:
+      - backend:
+          serviceName: test2-service
+          servicePort: 8001
