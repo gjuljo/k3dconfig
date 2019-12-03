@@ -602,7 +602,7 @@ Change also the **containers** block as follows:
 To install the Helm chart, run the following:
 
 ```console
-helm install --name mytestchart testchart
+$> helm install --name mytestchart testchart
 ```
 
 This is what you get when you invoke the service:
@@ -615,7 +615,7 @@ hello2 --> Ciao Giulio how are you?
 To delete the Helm chart, run the following
 
 ```console
-helm delete mytestchart --purge 
+$> helm delete mytestchart --purge 
 ```
 -----------------------------------------------------
 
