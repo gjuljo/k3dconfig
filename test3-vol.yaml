@@ -11,8 +11,8 @@ apiVersion: v1
 metadata:
   name: test3-config-env
 data:
-  MYAPP_START: "Hello"
-  MYAPP_END: "how are you?"
+  MYAPP_START_KEY: "Hello"
+  MYAPP_END_KEY: "how are you?"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,12 +42,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: test3-config-env
-              key: MYAPP_START
+              key: MYAPP_START_KEY
         - name: MYAPP_END
           valueFrom:
             configMapKeyRef:
               name: test3-config-env
-              key: MYAPP_END
+              key: MYAPP_END_KEY
         volumeMounts:
         - name: test3-vol
           mountPath: /app/static                  

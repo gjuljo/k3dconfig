@@ -3,8 +3,8 @@ apiVersion: v1
 metadata:
   name: test2-config
 data:
-  MYAPP_START_CONFIG: "Hello"
-  MYAPP_END_CONFIG: "how are you?"
+  MYAPP_START_KEY: "Hello"
+  MYAPP_END_KEY: "how are you?"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,12 +34,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: test2-config
-              key: MYAPP_START_CONFIG
+              key: MYAPP_START_KEY
         - name: MYAPP_END
           valueFrom:
             configMapKeyRef:
               name: test2-config
-              key: MYAPP_END_CONFIG     
+              key: MYAPP_END_KEY     
 ---
 apiVersion: v1
 kind: Service

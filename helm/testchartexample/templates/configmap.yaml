@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config-vol
+data:
+  hello.html: |-  
+{{ .Files.Get (.Values.hellofile) | indent 4}}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-config-env
+data:
+  MYAPP_USERNAME_KEY: {{ .Values.myEnv.name }} 
+  MYAPP_START_KEY: {{ .Values.myEnv.start }}
+  MYAPP_END_KEY: {{ .Values.myEnv.end }}
