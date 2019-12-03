@@ -609,7 +609,7 @@ This is what you get when you invoke the service:
 
 ```console
 $> curl test4.lvh.me
-hello2 --> Ciao Giulio how are you?
+hello1 --> Ciao Giulio how are you?
 ```
 
 To delete the Helm chart, run the following
@@ -617,11 +617,47 @@ To delete the Helm chart, run the following
 ```console
 $> helm delete mytestchart --purge 
 ```
+
+### UPGRADE THE HELM CHART
+You can upgrade the Helm chart and restart the pods automatically in two different ways, either with an explicit command line option to the `helm` command or using an annotation in the `Deployment` object by calculating the hash of the `ConfigMap`.
+
+#### UPGRADE WITH COMMAND LINE OPTION (DEPRECATED)
+When you upgrade the Helm chart, because you changed a value in `values.yaml` or a file mapped into a `ConfigMap`, such as `hello.html`, you can run the following command with the option `--recreate-pods` that restarts the pods:
+
+```console
+$> helm upgrade -f testchart/values2.yaml mytestchart testchart --recreate-pods
+```
+
+**ATTENTION**: this option is **deprecated** and will be removed in Helm 3.
+
+#### UPGRADE WITH COMMAND LINE OPTION
+A different solution is to generate the checksum of the `ConfigMap` in the annotations of the `Deployment`, so every time you upgrade the Helm chart, the pods are automatically restarted when something changed.
+
+Here follows the snipped of the **annotations** block you have to add to `Deployment`:
+
+```
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "testchart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+
+```
+
+This is the regular upgrade command:
+
+```console
+$> helm upgrade -f testchart/values2.yaml mytestchart testchart
+```
+
 -----------------------------------------------------
 
 # REFERENCES
 - [Getting Started with k3s](https://freshbrewed.science/getting-started-with-k3s/index.html)
 - [Manage k3s clusters with k3d](https://felixwiedmann.de/k3d-manage-k3s-clusters)
+- [Configmaps and deployments](https://sanderknape.com/2019/03/kubernetes-helm-configmaps-changes-deployments/)
 - [k3d](https://github.com/rancher/k3d)
 - [k3sup](https://github.com/alexellis/k3sup)
 - [k3s](https://k3s.io/)

@@ -67,9 +67,9 @@ tolerations: []
 
 affinity: {}
 
-hellofile: hello1.html
+hellofile: hello2.html
 
 myEnv:
   name: "Giulio"
-  start: "Ciao"
-  end: "come stai?"
+  start: "Hello"
+  end: "how are you?"
