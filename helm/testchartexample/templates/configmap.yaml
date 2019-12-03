@@ -4,7 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-config-vol
 data:
   hello.html: |-  
-{{ .Files.Get (.Values.hellofile) | indent 4}}
+{{ .Values.hellofile | b64dec | indent 4}}
 ---
 kind: ConfigMap
 apiVersion: v1

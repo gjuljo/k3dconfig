@@ -67,9 +67,9 @@ tolerations: []
 
 affinity: {}
 
-hellofile: aGVsbG8xIC0tPiB7ey5TdGFydH19IHt7LlVzZXJuYW1lfX0ge3suRW5kfX0=
+hellofile: aGVsbG8zIC0tPiB7ey5TdGFydH19IHt7LlVzZXJuYW1lfX0ge3suRW5kfX0=
 
 myEnv:
-  name: "Giulio"
-  start: "Ciao"
-  end: "come stai?"
+  name: "Giulio3"
+  start: "Hello"
+  end: "how are you?"

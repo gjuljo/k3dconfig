@@ -532,7 +532,7 @@ metadata:
   name: {{ .Chart.Name }}-config-vol
 data:
   hello.html: |-  
-{{ .Files.Get (.Values.hellofile) | indent 4}}
+{{ .Values.hellofile | b64dec | indent 4}}
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -612,10 +612,30 @@ $> curl test4.lvh.me
 hello1 --> Ciao Giulio how are you?
 ```
 
-To delete the Helm chart, run the following
+At install time, you can specify a different values file rather than using the one included in the chart itself:
 
 ```console
-$> helm delete mytestchart --purge 
+$> helm install --name mytestchart testchart -f values/values3.yaml
+```
+
+This is what you get when you invoke the service:
+
+```console
+$> curl test4.lvh.me
+hello3 --> Hello Giulio3 how are you?
+```
+
+This command, instead, uses the default `values.yaml` in the Helm chart and replaces the value of the `hellofile` settings from the command line, with the base64 econding of the `hello4.html` file calculated on the fly:
+
+```console
+$> helm install --name mytestchart testchart --set hellofile=$(cat values/hello4.html | base64)
+```
+
+This is what you get when you invoke the service:
+
+```console
+$> curl test4.lvh.me
+hello4 --> Hello Giulio how are you?
 ```
 
 ### UPGRADE THE HELM CHART
@@ -625,10 +645,10 @@ You can upgrade the Helm chart and restart the pods automatically in two differe
 When you upgrade the Helm chart, because you changed a value in `values.yaml` or a file mapped into a `ConfigMap`, such as `hello.html`, you can run the following command with the option `--recreate-pods` that restarts the pods:
 
 ```console
-$> helm upgrade -f testchart/values2.yaml mytestchart testchart --recreate-pods
+$> helm upgrade -f values/values2.yaml mytestchart testchart --recreate-pods
 ```
 
-**ATTENTION**: this option is **deprecated** and will be removed in Helm 3.
+**ATTENTION**: this option is **deprecated** and will be removed in Helm 3. This option restarts all the pods at once without any rollout policy.
 
 #### UPGRADE WITH COMMAND LINE OPTION
 A different solution is to generate the checksum of the `ConfigMap` in the annotations of the `Deployment`, so every time you upgrade the Helm chart, the pods are automatically restarted when something changed.
@@ -649,7 +669,14 @@ Here follows the snipped of the **annotations** block you have to add to `Deploy
 This is the regular upgrade command:
 
 ```console
-$> helm upgrade -f testchart/values2.yaml mytestchart testchart
+$> helm upgrade -f values/values2.yaml mytestchart testchart
+```
+
+#### DELETE THE HELML CHART
+To delete the Helm chart, run the following
+
+```console
+$> helm delete mytestchart --purge 
 ```
 
 -----------------------------------------------------
