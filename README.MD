@@ -2,13 +2,13 @@
 Thanks to [k3d](https://github.com/rancher/k3d), you can run a Kubernetes cluster in your laptop by just using docker.
 
 ## DEMO APPLICATION
-In this tutorial we use a simple Go application that just listes to incomping HTTP requests on port `8001`, returing the content of the file `static/hello.html`.
+In this tutorial we use a simple Go application that just listens to incoming HTTP requests on port `8001`, returning the content of the file `static/hello.html`.
 This file can three templates variables:
 - `{{.Start}}`
 - `{{.Username}}`
 - `{{.End}}`
 
-The actual value of those template variales can be set with the corresponding environment variables:
+The actual value of those template variables can be set with the corresponding environment variables:
 - `MYAPP_START`, default value `mystart`
 - `MYAPP_USERNAME`, default value `myuser`
 - `MYAPP_END`, default value `myend`
@@ -61,7 +61,7 @@ default --> Hello Giulio how are you?
 ```
 
 ### TEST THE IMAGE WITH CUSTOM ENVIRONMENT VARIABLES AND VOLUME
-Stop the running image and, in addition to the custom environment variables, replace the hello.html file with an external volumen::
+Stop the running image and, in addition to the custom environment variables, replace the hello.html file with an external volume:
 
 On Windows:
 ```console
@@ -126,7 +126,7 @@ $> k3d create -publish 80:80 --volume $PWD/registry:/etc/rancher/k3s
 $> export KUBECONFIG=$(k3d get-kubeconfig)
 ```
 
-7. Connect the local registry (i.e. the container `registry.local`) to the docker netword created by k3d:
+7. Connect the local registry (i.e. the container `registry.local`) to the docker network created by k3d:
 
 ```console
 $> docker network connect k3d-k3s-default registry.local
@@ -316,7 +316,7 @@ default --> Hello Giulio how are you?
 ```
 
 ### TEST A CONFIG MAP FOR THE HTML FILE
-You can even provide the contents of the `hello.html` file, by using the same or additional `ConfigMap` that contans the content of the file itself and that can be mounted as a `Volume`:
+You can even provide the contents of the `hello.html` file, by using the same or additional `ConfigMap` that includes the contents of the file itself and that can be mounted as a `Volume`:
 
 ```console
 kind: ConfigMap
@@ -513,7 +513,7 @@ hellofile: hello.html
 In this example, `hello.html` is expected to be in the `testchart` directory.
 
 
-4. Add the **myEnv** block by specifing values you want for the `MYAPP_START` and `MYAPP_END` environment variables:
+4. Add the **myEnv** block by specifying values you want for the `MYAPP_START` and `MYAPP_END` environment variables:
 
 ```
 myEnv:
