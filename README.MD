@@ -318,7 +318,7 @@ default --> Hello Giulio how are you?
 ### TEST A CONFIG MAP FOR THE HTML FILE
 You can even provide the contents of the `hello.html` file, by using the same or additional `ConfigMap` that includes the contents of the file itself and that can be mounted as a `Volume`:
 
-```console
+```
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -407,7 +407,7 @@ spec:
           servicePort: 8001
 ```
 
-Once the service is created:
+Create the service as follows:
 
 ```console
 $> kubectl create -f test3-vol.yaml
@@ -418,6 +418,119 @@ the usual invocation generates, this time, a different content:
 ```console
 $> curl test3.lvh.me
 hello --> Hello Giulio how are you?
+```
+
+### TEST A CONFIG MAP FOR THE HTML FILE
+One or more environment varialbles can be handeld as confidential data and stored in a `Secret` object and then used as an environment variable by a pod:
+
+```
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: test4-config-vol
+data:
+  hello.html: |
+     hello --> {{.Start}} {{.Username}} {{.End}}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: test4-config-env
+data:
+  MYAPP_START_KEY: "Hello"
+  MYAPP_END_KEY: "how are you?"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test4-secret
+type: Opaque
+stringData:
+    MYAPP_END_KEY: "this is secret"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test4-deployment
+  labels:
+    app: test4-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test4-app
+  template:
+    metadata:
+      labels:
+        app: test4-app
+    spec:
+      containers:
+      - name: test4-app
+        image: registry.lvh.me:5000/gjuljo/myapp:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: MYAPP_USERNAME
+          value: Giulio
+        - name: MYAPP_START
+          valueFrom:
+            configMapKeyRef:
+              name: test4-config-env
+              key: MYAPP_START_KEY
+        - name: MYAPP_END
+          valueFrom:
+            secretKeyRef:
+              name: test4-secret
+              key: MYAPP_END_KEY
+        volumeMounts:
+        - name: test4-vol
+          mountPath: /app/static                  
+      volumes:
+      - name: test4-vol
+        configMap:
+          name: test4-config-vol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test4-service
+  labels:
+    app: test4-service
+spec:
+  ports:
+  - port: 8001
+    targetPort: 8001
+    name: http
+  selector:
+    app: test4-app
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test4-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: test4.lvh.me
+    http:
+      paths:
+      - backend:
+          serviceName: test4-service
+          servicePort: 8001
+```
+
+Create the service as follows:
+
+```console
+$> kubectl create -f test4-secret.yaml
+```
+
+the usual invocation generates, this time, a different content:
+
+```console
+$> curl test4.lvh.me
+hello --> Hello Giulio this is a secret
 ```
 
 -----------------------------------------------------
