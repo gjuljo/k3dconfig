@@ -612,6 +612,7 @@ $> curl test4.lvh.me
 hello1 --> Ciao Giulio how are you?
 ```
 
+#### USING A DIFFERENT VALUES FILE
 At install time, you can specify a different values file rather than using the one included in the chart itself:
 
 ```console
@@ -625,6 +626,7 @@ $> curl test4.lvh.me
 hello3 --> Hello Giulio3 how are you?
 ```
 
+#### PROVIDING A CONTENT ON THE FLY
 This command, instead, uses the default `values.yaml` in the Helm chart and replaces the value of the `hellofile` settings from the command line, with the base64 econding of the `hello4.html` file calculated on the fly:
 
 ```console
@@ -636,6 +638,18 @@ This is what you get when you invoke the service:
 ```console
 $> curl test4.lvh.me
 hello4 --> Hello Giulio how are you?
+```
+
+#### MULTIPLE DEPLOYMENTS
+You can even have multiple deployments of the same chart on the same namespace or different namespaces. Just pay attention to name of the chart and the ingress hostname to avoid collisions:
+
+```console
+helm install --name mytestchart-prod testchart -f values/values3.yaml --set "ingress.hosts[0].host=test4-prod.lvh.me" --namespace prod
+```
+
+```console
+$> curl test4-prod.lvh.me
+hello3 --> Hello Giulio3 how are you?
 ```
 
 ### UPGRADE THE HELM CHART
