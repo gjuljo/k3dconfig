@@ -3,7 +3,7 @@ Thanks to [k3d](https://github.com/rancher/k3d), you can run a Kubernetes cluste
 
 ## DEMO APPLICATION
 In this tutorial we use a simple Go application that just listens to incoming HTTP requests on port `8001`, returning the content of the file `static/hello.html`.
-This file can three templates variables:
+This file uses three Go template variables:
 - `{{.Start}}`
 - `{{.Username}}`
 - `{{.End}}`
@@ -800,7 +800,7 @@ $> helm upgrade -f values/values2.yaml mytestchart testchart
 ```
 
 #### DELETE THE HELML CHART
-To delete the Helm chart, run the following
+To delete the Helm chart, run the following:
 
 ```console
 $> helm delete mytestchart --purge 
@@ -812,6 +812,7 @@ $> helm delete mytestchart --purge
 - [Getting Started with k3s](https://freshbrewed.science/getting-started-with-k3s/index.html)
 - [Manage k3s clusters with k3d](https://felixwiedmann.de/k3d-manage-k3s-clusters)
 - [Configmaps and deployments](https://sanderknape.com/2019/03/kubernetes-helm-configmaps-changes-deployments/)
+- [Helm secrets](https://medium.com/@mel000vin_14011/encrypting-helm-secrets-7f37a0ccabeb)
 - [k3d](https://github.com/rancher/k3d)
 - [k3sup](https://github.com/alexellis/k3sup)
 - [k3s](https://k3s.io/)
