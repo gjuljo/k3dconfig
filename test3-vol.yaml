@@ -64,7 +64,7 @@ metadata:
     app: test3-service
 spec:
   ports:
-  - port: 8001
+  - port: 8000
     targetPort: 8001
     name: http
   selector:
@@ -83,4 +83,4 @@ spec:
       paths:
       - backend:
           serviceName: test3-service
-          servicePort: 8001
+          servicePort: 8000

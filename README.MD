@@ -44,7 +44,7 @@ $> docker run -it --rm -p 8001:8001 gjuljo/myapp
 ```
 
 ```console
-$> curl localhost:8001
+$> curl -w "\n" localhost:8001
 default --> mystart myuser myend
 ```
 
@@ -56,7 +56,7 @@ $> docker run -it --rm -p 8001:8001 -e MYAPP_START=Hello -e MYAPP_USERNAME=Giuli
 ```
 
 ```console
-$> curl localhost:8001
+$> curl -w "\n" localhost:8001
 default --> Hello Giulio how are you?
 ```
 
@@ -70,11 +70,11 @@ $> docker run -it --rm -p 8001:8001 -v %CD%/hello1/:/app/static/ -e MYAPP_START=
 
 On Linux
 ```console
-$> docker run -it --rm -p 8001:8001 -v $pwd/hello1/:/app/static/ -e MYAPP_START=Hello -e MYAPP_USERNAME=Giulio -e MYAPP_END="how are you?" gjuljo/myapp
+$> docker run -it --rm -p 8001:8001 -v $PWD/hello1/:/app/static/ -e MYAPP_START=Hello -e MYAPP_USERNAME=Giulio -e MYAPP_END="how are you?" gjuljo/myapp
 ```
 
 ```console
-$> curl localhost:8001
+$> curl -w "\n" localhost:8001
 hello1 --> Hello Giulio how are you?
 ```
 
@@ -111,7 +111,7 @@ mirrors:
     - http://registry.local:5000
 ```
 
-Please notice that k3d maps the registry label (`registry.lvh.me:5000`) to the hostname of the container running as registry (`registry.local:5000`).
+Please notice that k3d maps the registry label `registry.lvh.me:5000` to the hostname of the container running as registry `registry.local:5000`, that we previously started.
 
 
 5. Create the k3d cluster mapping the local `registry` volume, where `registries.yaml` is supposed to be:
@@ -180,7 +180,7 @@ metadata:
     app: test1-service
 spec:
   ports:
-  - port: 8001
+  - port: 8000
     targetPort: 8001
     name: http
   selector:
@@ -199,7 +199,7 @@ spec:
       paths:
       - backend:
           serviceName: test1-service
-          servicePort: 8001
+          servicePort: 8000
 ```
 
 Notice the following:
@@ -214,14 +214,14 @@ $> kubectl create -f test1-default.yaml
 This is what you get when you invoke the service:
 
 ```console
-$> curl test1.lvh.me
+$> curl -w "\n" test1.lvh.me
 default --> mystart Giulio myend
 ```
 
 You get the same result even if you use the ip address (`127.0.0.1`) and set the `Host` header with the expected hostname (i.e. `test1.lvh.me`):
 
 ```console
-$> curl -H 'Host:test1.lvh.me' 127.0.0.1 
+$> curl -w "\n" -H 'Host:test1.lvh.me' 127.0.0.1 
 default --> mystart Giulio myend
 ```
 
@@ -280,7 +280,7 @@ metadata:
     app: test2-service
 spec:
   ports:
-  - port: 8001
+  - port: 8000
     targetPort: 8001
     name: http
   selector:
@@ -299,7 +299,7 @@ spec:
       paths:
       - backend:
           serviceName: test2-service
-          servicePort: 8001
+          servicePort: 8000
 ```
 
 In this second deployment, the environment variables `MYAPP_START` and `MYAPP_END` are, correspondigly, `Hello` and `how are you?`:
@@ -311,7 +311,7 @@ $> kubectl create -f test2-env.yaml
 In this second test the ingress hostname is `test2.lvh.me`:
 
 ```console
-$> curl test2.lvh.me
+$> curl -w "\n" test2.lvh.me
 default --> Hello Giulio how are you?
 ```
 
@@ -385,7 +385,7 @@ metadata:
     app: test3-service
 spec:
   ports:
-  - port: 8001
+  - port: 8000
     targetPort: 8001
     name: http
   selector:
@@ -404,7 +404,7 @@ spec:
       paths:
       - backend:
           serviceName: test3-service
-          servicePort: 8001
+          servicePort: 8000
 ```
 
 Create the service as follows:
@@ -416,12 +416,12 @@ $> kubectl create -f test3-vol.yaml
 the usual invocation generates, this time, a different content:
 
 ```console
-$> curl test3.lvh.me
+$> curl -w "\n" test3.lvh.me
 hello --> Hello Giulio how are you?
 ```
 
 ### TEST A CONFIG MAP FOR THE HTML FILE
-One or more environment varialbles can be handeld as confidential data and stored in a `Secret` object and then used as an environment variable by a pod:
+One or more environment variables can be handeld as confidential data and stored in a `Secret` object and then used as an environment variable by a pod:
 
 ```
 kind: ConfigMap
@@ -498,7 +498,7 @@ metadata:
     app: test4-service
 spec:
   ports:
-  - port: 8001
+  - port: 8000
     targetPort: 8001
     name: http
   selector:
@@ -517,7 +517,7 @@ spec:
       paths:
       - backend:
           serviceName: test4-service
-          servicePort: 8001
+          servicePort: 8000
 ```
 
 Create the service as follows:
@@ -529,7 +529,7 @@ $> kubectl create -f test4-secret.yaml
 the usual invocation generates, this time, a different content:
 
 ```console
-$> curl test4.lvh.me
+$> curl -w "\n" test4.lvh.me
 hello --> Hello Giulio this is a secret
 ```
 
@@ -721,7 +721,7 @@ $> helm install --name mytestchart testchart
 This is what you get when you invoke the service:
 
 ```console
-$> curl test4.lvh.me
+$> curl -w "\n" test4.lvh.me
 hello1 --> Ciao Giulio how are you?
 ```
 
@@ -735,7 +735,7 @@ $> helm install --name mytestchart testchart -f values/values3.yaml
 This is what you get when you invoke the service:
 
 ```console
-$> curl test4.lvh.me
+$> curl -w "\n" test4.lvh.me
 hello3 --> Hello Giulio3 how are you?
 ```
 
@@ -749,7 +749,7 @@ $> helm install --name mytestchart testchart --set hellofile=$(cat values/hello4
 This is what you get when you invoke the service:
 
 ```console
-$> curl test4.lvh.me
+$> curl -w "\n" test4.lvh.me
 hello4 --> Hello Giulio how are you?
 ```
 
@@ -761,7 +761,7 @@ helm install --name mytestchart-prod testchart -f values/values3.yaml --set "ing
 ```
 
 ```console
-$> curl test4-prod.lvh.me
+$> curl -w "\n" test4-prod.lvh.me
 hello3 --> Hello Giulio3 how are you?
 ```
 
