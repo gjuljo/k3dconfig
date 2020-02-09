@@ -1,0 +1,4 @@
+mirrors:
+  "registry.lvh.me:5000":
+    endpoint:
+    - http://registry.local:5000
